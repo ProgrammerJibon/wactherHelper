@@ -10,4 +10,4 @@ with open(file_path, "w") as f:
     f.write(f"Current date and time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
 
 
-print("Working!!!")
+print("Working v2.0!!!")
